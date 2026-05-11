@@ -249,7 +249,7 @@ class SpeedtestGUI:
             server = self.server_id.get().strip()
 
             if server and server.lower() != "auto":
-                cmd.extend(["-s", server])
+                cmd.extend(["-s", server, "--accept-gdpr"])
 
             # Nasconde completamente la console
             startupinfo = subprocess.STARTUPINFO()
