@@ -8,6 +8,8 @@ import sys
 import platform
 
 
+VERSION = "0.0.3"
+
 def get_speedtest_executable():
 
     
@@ -70,11 +72,13 @@ def get_speedtest_executable():
 
 class SpeedtestGUI:
 
+    
+
     def __init__(self, root):
 
         self.root = root
-        self.root.title("Speedtest GUI")
-        self.root.geometry("750x350")
+        self.root.title("Speedtest GUI - Ver:"+VERSION)
+        self.root.geometry("800x600")
         self.root.resizable(False, False)
 
         # Modalità debug se presente -debug
