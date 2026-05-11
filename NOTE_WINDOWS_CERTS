@@ -1,0 +1,20 @@
+## IN POWERSHELL CREO IL CERTIFICATO
+
+New-SelfSignedCertificate `
+  -Type CodeSigning `
+  -Subject "CN=DavideDaSerra" `
+  -CertStoreLocation Cert:\CurrentUser\My
+
+# esporto il certificato dal cert manager di windows
+
+## LO CONVERTO IN BASE64
+  [Convert]::ToBase64String(
+  [IO.File]::ReadAllBytes("codesign.pfx")
+) > cert.txt
+
+
+IN GITHUB SECRETS
+REPOSITORY -> SETTINGS -> SECRETS AND VARIABLES -> ACTIONS -> SECRETS
+
+WINDOWS_CERTIFICATE ci metto il contenuto base64
+WINDOWS_CERT_PASSWORD ci metto la password del cert PFX

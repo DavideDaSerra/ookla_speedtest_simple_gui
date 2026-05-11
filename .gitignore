@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+servers.txt
+
+
+__pycache__/
+build/
+dist/
+*.spec
+
+
+*.ignored

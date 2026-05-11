@@ -1,0 +1,204 @@
+name: Build and Release
+
+on:
+
+  push:
+    tags:
+      - 'v*'
+
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    strategy:
+
+      matrix:
+
+        os:
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      # ==========================================
+      # Checkout
+      # ==========================================
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ==========================================
+      # Python
+      # ==========================================
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ==========================================
+      # Dependencies
+      # ==========================================
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Install Versioning  Requirements
+        # if: runner.os == 'Windows'
+        run: |
+          pip install pywin32
+
+      # ==========================================
+      # Windows build
+      # ==========================================
+
+      #- name: Build Windows
+      #  if: runner.os == 'Windows'
+      #  run: |
+      #    pyinstaller ^
+      #      --clean ^
+      #      --onefile ^
+      #      --windowed ^
+      #      --name SpeedtestGUI ^
+      #      --add-data "bin;bin" ^
+      #      gui.py
+
+
+      - name: Decode certificate
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          [IO.File]::WriteAllBytes(
+            "cert_DavideDaSerra.pfx",
+            [Convert]::FromBase64String(
+              "${{ secrets.WINDOWS_CERTIFICATE }}"
+            )
+          )
+
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        run: |
+          pyinstaller --clean --onefile --windowed --icon icon.ico --version-file version_info.txt --name SpeedtestGUI --add-data "bin;bin" gui.py
+
+
+      - name: Sign executable
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+
+          $signtool = @(
+            "${env:ProgramFiles(x86)}\Windows Kits\10\App Certification Kit\signtool.exe",
+            "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64\signtool.exe",
+            "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.0.22621.0\x64\signtool.exe"
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+          & $signtool sign `
+            /f cert_DavideDaSerra.pfx `
+            /p "${{ secrets.WINDOWS_CERT_PASSWORD }}" `
+            /tr http://timestamp.digicert.com `
+            /td sha256 `
+            /fd sha256 `
+            dist\SpeedtestGUI.exe
+
+      # ==========================================
+      # Linux build
+      # ==========================================
+
+      - name: Build Linux
+        if: runner.os == 'Linux'
+        run: |
+          pyinstaller \
+            --clean \
+            --onefile \
+            --windowed \
+            --name SpeedtestGUI \
+            --add-data "bin:bin" \
+            gui.py
+
+      # ==========================================
+      # macOS build
+      # ==========================================
+
+      - name: Build macOS
+        if: runner.os == 'macOS'
+        run: |
+          pyinstaller \
+            --clean \
+            --onefile \
+            --windowed \
+            --name SpeedtestGUI \
+            --add-data "bin:bin" \
+            gui.py
+
+      # ==========================================
+      # Rename output
+      # ==========================================
+
+      - name: Rename Windows binary
+        if: runner.os == 'Windows'
+        run: |
+          ren dist\\SpeedtestGUI.exe SpeedtestGUI-Windows.exe
+
+      - name: Rename Linux binary
+        if: runner.os == 'Linux'
+        run: |
+          mv dist/SpeedtestGUI dist/SpeedtestGUI-Linux
+
+      - name: Rename macOS binary
+        if: runner.os == 'macOS'
+        run: |
+          mv dist/SpeedtestGUI dist/SpeedtestGUI-macOS
+
+      # ==========================================
+      # Upload artifacts
+      # ==========================================
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpeedtestGUI-${{ runner.os }}
+          path: dist/*
+
+  release:
+
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+      # ==========================================
+      # Download all artifacts
+      # ==========================================
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # ==========================================
+      # Create Release
+      # ==========================================
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*Linux
+            artifacts/**/*macOS
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
