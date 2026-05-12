@@ -51,7 +51,7 @@ jobs:
           pip install pyinstaller
 
       - name: Install Versioning  Requirements
-        # if: runner.os == 'Windows'
+        if: runner.os == 'Windows'
         run: |
           pip install pywin32
 
@@ -85,7 +85,7 @@ jobs:
       - name: Build Windows
         if: runner.os == 'Windows'
         run: |
-          pyinstaller --clean --onefile --windowed --icon icon.ico --version-file version_info.txt --name SpeedtestGUI --add-data "bin;bin" gui.py
+          pyinstaller --clean --onefile --windowed --icon assets/icon.ico --version-file version_info.txt --name SpeedtestGUI --add-data "bin;bin" gui.py
 
 
       - name: Sign executable
