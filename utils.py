@@ -80,3 +80,58 @@ def get_speedtest_executable():
             pass
 
     return exe_path
+
+
+def get_app_version():
+
+    # =====================================
+    # Esecuzione come EXE PyInstaller
+    # =====================================
+
+    if getattr(sys, 'frozen', False):
+
+        try:
+
+            from win32api import (
+                GetFileVersionInfo,
+                LOWORD,
+                HIWORD
+            )
+
+            exe_path = sys.executable
+
+            info = GetFileVersionInfo(
+                exe_path,
+                "\\"
+            )
+
+            ms = info['FileVersionMS']
+            ls = info['FileVersionLS']
+
+            version = "%d.%d.%d.%d" % (
+                HIWORD(ms),
+                LOWORD(ms),
+                HIWORD(ls),
+                LOWORD(ls)
+            )
+
+            return version
+
+        except Exception:
+
+            pass
+
+    # =====================================
+    # Fallback sviluppo
+    # =====================================
+
+    try:
+
+        from config import VERSIONE
+
+        return VERSIONE
+
+    except:
+
+        return "0.0.0"
+

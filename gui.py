@@ -15,6 +15,8 @@ from config import (
     AUTORE
 )
 
+from utils import get_app_version
+
 from history_manager import (
     HistoryManager
 )
@@ -320,8 +322,8 @@ class SpeedtestGUI:
 
         info_text = (
             f"Speedtest GUI\n\n"
-            f"Versione: {VERSIONE}\n"
-            f"Autore: {AUTORE}\n"
+            f"Versione: {get_app_version()}\n"
+            f"Autore: {get_app_author()}\n"
             f"Crediti: speedtest.net"
         )
 
