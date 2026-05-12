@@ -13,11 +13,11 @@ Just run the executable found under dist.
 <img width="751" height="583" alt="image" src="https://github.com/user-attachments/assets/865f7949-953f-4819-9b44-36d868bafbdc" />
 
 
-
-#NOTES:
+# NOTES:
  A new release is created when pushing a new tag like v0.0.7
 
  To check the signature run in powershell:
  Get-AuthenticodeSignature .\SpeedtestGUI.exe
 
  NOTA: windows darà comunque un warning 
+

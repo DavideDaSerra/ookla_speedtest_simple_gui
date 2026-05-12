@@ -82,7 +82,6 @@ def get_speedtest_executable():
     return exe_path
 
 
-
 def get_app_version():
 
     # =====================================
@@ -135,4 +134,4 @@ def get_app_version():
     except:
 
         return "0.0.0"
-    
+
