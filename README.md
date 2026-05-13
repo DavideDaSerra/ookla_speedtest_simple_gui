@@ -21,3 +21,4 @@ Just run the executable found under dist.
 
  NOTA: windows darà comunque un warning 
 
+| Windows | [Download](https://github.com/DavideDaSerra/ookla_speedtest_simple_gui/releases/latest/download/SpeedtestGUI-windows.exe) |
