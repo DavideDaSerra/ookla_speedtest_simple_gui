@@ -16,6 +16,7 @@ from config import (
 )
 
 from utils import get_app_version
+from utils import get_app_author
 
 from history_manager import (
     HistoryManager
@@ -283,9 +284,9 @@ class SpeedtestGUI:
 
             self.root.after(
                 0,
-                lambda: messagebox.showerror(
+                lambda err=str(e): messagebox.showerror(
                     "Errore",
-                    str(e)
+                    str(err)
                 )
             )
 

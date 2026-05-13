@@ -18,6 +18,7 @@ def run_speedtest(
 
     cmd = [
         exe_path,
+        "--accept-license",
         "--accept-gdpr"
     ]
 

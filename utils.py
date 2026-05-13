@@ -1,7 +1,7 @@
 import os
 import sys
 import platform
-
+import config
 
 def get_base_dir():
 
@@ -135,3 +135,8 @@ def get_app_version():
 
         return "0.0.0"
 
+
+def get_app_author():
+    return config.AUTORE
+
+## todo: sistemare questa funzione per leggere il version_info
